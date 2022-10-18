@@ -59,3 +59,11 @@ def CalculateDeltaFromAdj(A,edges):
     for e in range(0,len(edges)):
         delta[e] = A[edges[e][0],edges[e][1]]
     return delta
+
+def CalculateAdjFromDelta(delta,edges,N):
+    A = np.zeros((N,N))
+    for e in range(0,len(edges)):
+        edge = edges[e]
+        A[edge[0]][edge[1]]=delta[e]
+        A[edge[1]][edge[0]]=delta[e]
+    return A
