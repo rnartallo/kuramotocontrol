@@ -18,9 +18,19 @@ def SolveKuramotoModel(theta_0,T,N,w,A,num_points):
 
 def CalculatePhaseDiffs(oscs_end_values):
     x_acheived = []
-    for i in range(0,len(oscs_end_values)-1):
-        x_acheived.append(oscs_end_values[i+1]-oscs_end_values[i])
+    for i in range(0,len(oscs_end_values)):
+        x_acheived.append(oscs_end_values[i]-oscs_end_values[0])
     return x_acheived
+
+
+def CalculateCorrelationMatrix(x_min):
+    N=len(x_min)
+    corr = np.zeros((N,N))
+    for i in range(0,N):
+        for j in range(i+1,N):
+            corr[i,j] = np.cos(x_min[j]-x_min[i])
+    corr = corr + np.transpose(corr) + np.identity(N)
+    return corr
 
 def CalculateEdgeSet(A):
     edges = []
