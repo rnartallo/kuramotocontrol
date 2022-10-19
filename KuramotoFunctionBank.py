@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.integrate import odeint
-
+from scipy.signal import butter,lfilter,lfilter_zi
 def KuramotoModel(theta,t,p):
     N,w,A = p
     dOsc = np.zeros(N)
@@ -77,3 +77,11 @@ def CalculateAdjFromDelta(delta,edges,N):
         A[edge[0]][edge[1]]=delta[e]
         A[edge[1]][edge[0]]=delta[e]
     return A
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    return butter(order, [lowcut, highcut], fs=fs, btype='band')
+
+def butter_bandpass_filter(x, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    z = lfilter(b, a, x,axis=0)
+    return z
