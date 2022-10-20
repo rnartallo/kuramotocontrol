@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.integrate import odeint
-from scipy.signal import butter,lfilter,lfilter_zi
+from scipy.signal import butter,lfilter
 def KuramotoModel(theta,t,p):
     N,w,A = p
     dOsc = np.zeros(N)
