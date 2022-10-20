@@ -1,3 +1,4 @@
+from cmath import phase
 import numpy as np
 from scipy.integrate import odeint
 from scipy.signal import butter,lfilter
@@ -21,8 +22,7 @@ def CalculatePhaseDiffs(oscs_end_values):
     for i in range(0,len(oscs_end_values)):
         x_acheived.append(oscs_end_values[i]-oscs_end_values[0])
     return x_acheived
-
-
+ 
 def CalculateCorrelationMatrix(x_min):
     N=len(x_min)
     corr = np.zeros((N,N))
@@ -63,6 +63,7 @@ def CalculatePhaseDifferencesFromMin(x_min,edges):
         edge = edges[e]
         x_desired[e] = x_min[edge[1]]-x_min[edge[0]]
     return x_desired
+
 
 def CalculateDeltaFromAdj(A,edges):
     delta = np.zeros((len(edges),1))
