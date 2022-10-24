@@ -1,5 +1,5 @@
-from operator import matmul
 import numpy as np
+import math as m
 import cmath
 def GPMAlgorithm(C):
     N = C.shape[0]
@@ -35,5 +35,5 @@ def CalculatePhases(T_succ):
     N = len(T_succ)
     phases = np.zeros(N)
     for i in range(0,N):
-        phases[i] = cmath.phase(T_succ[i])
+        phases[i] = m.atan2(T_succ[i].real,T_succ[i].imag)
     return phases
