@@ -25,6 +25,14 @@ def CalculatePhaseDiffs(oscs_end_values):
         x_acheived.append(oscs_end_values[i]-oscs_end_values[0])
     return x_acheived
  
+def CalculateCorrelationMatrixFromPhases(phases):
+    N = len(phases)
+    FC = np.zeros((N,N))
+    for i in range(0,N):
+        for j in range(0,N):
+            FC[i,j]=np.cos(phases[j]-phases[i])
+    return FC
+
 def CalculateCorrelationMatrix(x_min):
     N=len(x_min)
     corr = np.zeros((N,N))
@@ -81,6 +89,7 @@ def CalculateAdjFromDelta(delta,edges,N):
         A[edge[1]][edge[0]]=delta[e]
     return A
 
+
 def butter_bandpass(lowcut, highcut, fs, order=2):
     return butter(order, [lowcut, highcut], fs=fs, btype='band')
 
@@ -111,5 +120,5 @@ def RemoveBounds(phases):
     for j in range(0,N):
         for t in range(0,T-1):
             if np.abs(phases[t,j]-phases[t+1,j])>5:
-                phases_no_mod[t+1:T-1,j] = phases_no_mod[t+1:T-1,j] -2*np.pi
+                phases_no_mod[t+1:T,j] = phases_no_mod[t+1:T,j] -2*np.pi
     return phases_no_mod
