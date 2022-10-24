@@ -2,6 +2,8 @@ from cmath import phase
 import numpy as np
 from scipy.integrate import odeint
 from scipy.signal import butter,lfilter
+import cmath
+
 def KuramotoModel(theta,t,p):
     N,w,A = p
     dOsc = np.zeros(N)
@@ -86,3 +88,13 @@ def butter_bandpass_filter(x, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     z = lfilter(b, a, x,axis=0)
     return z
+
+def CalculateCFromMeanPhaseDiff(phase_diff):
+    N = phase_diff.shape[0]
+    C = np.zeros((N,N),dtype=complex)+np.identity(N)
+    for i in range(0,N):
+        for j in range(i+1,N):
+            C[i,j] = cmath.exp(1j*phase_diff[i,j])
+            C[j,i] = cmath.exp(-1j*phase_diff[i,j])
+    return C
+
