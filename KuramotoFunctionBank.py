@@ -81,10 +81,10 @@ def CalculateAdjFromDelta(delta,edges,N):
         A[edge[1]][edge[0]]=delta[e]
     return A
 
-def butter_bandpass(lowcut, highcut, fs, order=5):
+def butter_bandpass(lowcut, highcut, fs, order=2):
     return butter(order, [lowcut, highcut], fs=fs, btype='band')
 
-def butter_bandpass_filter(x, lowcut, highcut, fs, order=5):
+def butter_bandpass_filter(x, lowcut, highcut, fs, order=2):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     z = lfilter(b, a, x,axis=0)
     return z
