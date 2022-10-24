@@ -98,3 +98,18 @@ def CalculateCFromMeanPhaseDiff(phase_diff):
             C[j,i] = cmath.exp(-1j*phase_diff[i,j])
     return C
 
+def CalculateXMinFromPhases(phases):
+    xmin = np.zeros(len(phases))
+    for i in range(0,len(phases)):
+        xmin[i] = phases[i]-phases[0]
+    return xmin
+
+def RemoveBounds(phases):
+    phases_no_mod = phases
+    T = phases.shape[0]
+    N = phases.shape[1]
+    for j in range(0,N):
+        for t in range(0,T-1):
+            if np.abs(phases[t,j]-phases[t+1,j])>5:
+                phases_no_mod[t+1:T-1,j] = phases_no_mod[t+1:T-1,j] -2*np.pi
+    return phases_no_mod
