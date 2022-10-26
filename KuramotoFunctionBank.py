@@ -122,3 +122,25 @@ def RemoveBounds(phases):
             if np.abs(phases[t,j]-phases[t+1,j])>5:
                 phases_no_mod[t+1:T,j] = phases_no_mod[t+1:T,j] -2*np.pi
     return phases_no_mod
+
+def CalculatePhaseLockingValue(phases):
+    N = phases.shape[1]
+    window_length = phases.shape[0]
+    PLV = np.zeros((N,N)) + np.identity(N)
+    for i in range(0,N-1):
+        for k in range(i+1,N):
+            sum =0
+            for t in range(0,window_length):
+                sum+= cmath.exp(1j*(phases[t,i]-phases[t,k]))
+            PLV[i,k] = float(np.abs(sum/window_length))
+            PLV[k,i] = PLV[i,k]
+    return PLV
+
+def CalculatePhaseLockingIndex(PLV):
+    N = PLV.shape[0]
+    PL_index = 0
+    for i in range(0,N-1):
+        for j in range(i+1,N):
+            PL_index+=PLV[i,j]
+    return PL_index/(N*(N-1)/2)
+    
