@@ -13,10 +13,25 @@ def KuramotoModel(theta,t,p):
             dOsc[n] = dOsc[n]+A[n][i]*np.sin(theta[i]-theta[n])
     return dOsc
 
+def KuramotoModelTDFrequency(theta,t,p):
+    N,w,A,numpoints,T = p
+    dOsc = np.zeros(N)
+    for n in range(0,N):
+        dOsc[n] = w[n,min(int(np.floor(t)),39)]
+        for i in range(0,N):
+            dOsc[n] = dOsc[n]+A[n][i]*np.sin(theta[i]-theta[n])
+    return dOsc
+
 def SolveKuramotoModel(theta_0,T,N,w,A,num_points):
     p=[N,w,A]
     t = np.linspace(0,T,num_points)
     sol =odeint(KuramotoModel,theta_0,t,args=(p,))
+    return [sol,t]
+
+def SolveKuramotoModeTDFrequency(theta_0,T,N,w,A,num_points):
+    p=[N,w,A,num_points,T]
+    t = np.linspace(0,T,num_points)
+    sol =odeint(KuramotoModelTDFrequency,theta_0,t,args=(p,))
     return [sol,t]
 
 def CalculatePhaseDiffs(oscs_end_values):
