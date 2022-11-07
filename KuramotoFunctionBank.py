@@ -257,9 +257,6 @@ def CheckBalanceFromLayers(layers,A):
     return True
 
 
-
-
-
 def DetermineStructuralBalance(W):
     N= np.shape(W)[0]
     pos_edges, neg_edges = CalculateSignedEdgeSet(W)
@@ -270,3 +267,16 @@ def DetermineStructuralBalance(W):
     super_neg_adj = CalculateSuperNegAdj(pos_cc,neg_edges)
     layers = ExtractLayersFromSuperNegGraph(super_neg_adj)
     return CheckBalanceFromLayers(layers,super_neg_adj)
+
+
+def CalculateSignedNetwork(SC,x_desired,edges):
+    A = np.zeros(np.shape(SC))
+    for i in range(0,len(edges)):
+        A[edges[i][0],edges[i][1]]= SC[edges[i][0],edges[i][1]]* np.cos(x_desired[i])
+    return A
+
+def CalculateWeightedCosineMatrix(SignedMatrix,edges):
+    V = np.zeros(len(edges))
+    for i in range(0,len(edges)):
+        V[i] = SignedMatrix[edges[i][0],edges[i][1]]
+    return np.diag(V)
