@@ -2,6 +2,7 @@ from cmath import phase
 import numpy as np
 from scipy.integrate import odeint
 from scipy.signal import butter,lfilter
+from scipy.sparse.csgraph import connected_components
 import cmath
 
 def KuramotoModel(theta,t,p):
@@ -174,4 +175,98 @@ def CalculatePhaseLockingIndex(PLV):
         for j in range(i+1,N):
             PL_index+=PLV[i,j]
     return PL_index/(N*(N-1)/2)
-    
+
+def CalculateSignedEdgeSet(A):
+    pos_edges = []
+    neg_edges =[]
+    for i in range(0,A.shape[0]):
+        for j in range(0,A.shape[1]):
+            if A[i][j]>0:
+                pos_edge = [min(i,j),max(i,j)]
+                if pos_edge not in pos_edges:
+                    pos_edges.append(pos_edge)
+            if A[i][j]<0:
+                neg_edge = [min(i,j),max(i,j)]
+                if neg_edge not in neg_edges:
+                    neg_edges.append(neg_edge)
+    return [pos_edges,neg_edges]
+
+def CalculateAdjFromEdges(edges,N):
+    A = np.zeros((N,N))
+    for e in edges:
+        A[e[0],e[1]]=1
+        #A[e[1],e[0]]=1
+    return A
+
+def DFS(v,visited,path,A,N):
+    path.append(v)
+    for j in range(0,N):
+        if A[v,j]>0:
+            visited[j]=1
+            path,visited = DFS(j,visited,path,A,N)
+    return path,visited
+
+def CalculateConnectedComponents(A):
+    cc =[]
+    cc_info = connected_components(A)
+    for i in range(0,cc_info[0]):
+        c =[]
+        for j in range(0,len(cc_info[1])):
+            if cc_info[1][j]==i:
+                c.append(j)
+        cc.append(c)
+    return cc
+
+ 
+def CheckForNegEdgesSuperNode(pos_cc,neg_edges):
+    for cc in pos_cc:
+        for e in neg_edges:
+            if e[0] in cc and e[1] in cc:
+                return True
+    return False
+
+def CalculateSuperNegAdj(pos_cc,neg_edges):
+    M = len(pos_cc)
+    A = np.zeros((M,M))
+    for i in range(0,M):
+        for j in range(0,M):
+            for e in neg_edges:
+                if e[0] in pos_cc[i] and e[1] in pos_cc[j]:
+                    A[i,j]=1
+                    A[j,i]=1
+    return A
+
+
+def ExtractLayersFromSuperNegGraph(A):
+    N = np.shape(A)[0]
+    layers = N*np.ones(N)
+    layers[0]=0
+    for v in range(0,N):
+        for j in range(0,N):
+            if A[v,j]>0:
+                layers[j] = min(layers[v]+1,layers[j])
+    return layers
+
+
+def CheckBalanceFromLayers(layers,A):
+    N = np.shape(A)[0]
+    for j in range(0,N):
+        for k in range(0,N):
+            if layers[j]==layers[k] and A[j,k]>0:
+                return False
+    return True
+
+
+
+
+
+def DetermineStructuralBalance(W):
+    N= np.shape(W)[0]
+    pos_edges, neg_edges = CalculateSignedEdgeSet(W)
+    pos_adj = CalculateAdjFromEdges(pos_edges,N)
+    pos_cc = CalculateConnectedComponents(pos_adj)
+    if CheckForNegEdgesSuperNode(pos_cc,neg_edges):
+        return False
+    super_neg_adj = CalculateSuperNegAdj(pos_cc,neg_edges)
+    layers = ExtractLayersFromSuperNegGraph(super_neg_adj)
+    return CheckBalanceFromLayers(layers,super_neg_adj)
