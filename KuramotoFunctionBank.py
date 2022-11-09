@@ -33,21 +33,21 @@ def KuramotoModelTDFrequencyAdj(theta,t,p):
             dOsc[n] = dOsc[n]+A[n][i][min(int(np.floor(t)),39)]*np.sin(theta[i]-theta[n])
     return dOsc
 
-def SolveKuramotoModel(theta_0,T,N,w,A,num_points):
+def SolveKuramotoModel(theta_0,T,N,w,A,num_points,t_0):
     p=[N,w,A]
-    t = np.linspace(0,T,num_points)
+    t = np.linspace(t_0,T,num_points)
     sol =odeint(KuramotoModel,theta_0,t,args=(p,))
     return [sol,t]
 
-def SolveKuramotoModeTDFrequency(theta_0,T,N,w,A,num_points):
+def SolveKuramotoModelTDlFrequency(theta_0,T,N,w,A,num_points,t_0):
     p=[N,w,A,num_points,T]
-    t = np.linspace(0,T,num_points)
+    t = np.linspace(t_0,T,num_points)
     sol =odeint(KuramotoModelTDFrequency,theta_0,t,args=(p,))
     return [sol,t]
 
-def SolveKuramotoModeTDFrequencyAdj(theta_0,T,N,w,A,num_points):
+def SolveKuramotoModelTDFrequencyAdj(theta_0,T,N,w,A,num_points,t_0):
     p=[N,w,A,num_points,T]
-    t = np.linspace(0,T,num_points)
+    t = np.linspace(t_0,T,num_points)
     sol =odeint(KuramotoModelTDFrequencyAdj,theta_0,t,args=(p,))
     return [sol,t]
 
