@@ -39,7 +39,7 @@ def SolveKuramotoModel(theta_0,T,N,w,A,num_points,t_0):
     sol =odeint(KuramotoModel,theta_0,t,args=(p,))
     return [sol,t]
 
-def SolveKuramotoModelTDlFrequency(theta_0,T,N,w,A,num_points,t_0):
+def SolveKuramotoModelTDFrequency(theta_0,T,N,w,A,num_points,t_0):
     p=[N,w,A,num_points,T]
     t = np.linspace(t_0,T,num_points)
     sol =odeint(KuramotoModelTDFrequency,theta_0,t,args=(p,))
